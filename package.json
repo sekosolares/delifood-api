@@ -1,0 +1,16 @@
+{
+  "name": "micro-ecommerce-api",
+  "version": "1.0.0",
+  "description": "Micro E-Commerce API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "typescript",
+    "nodejs",
+    "express"
+  ],
+  "author": "Axel J. Solares <buho@seko.dev>",
+  "license": "MIT"
+}
