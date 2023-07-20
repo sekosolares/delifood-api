@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { IUnitUser, IUser } from './user.interface';
+import { IUnitUser } from './user.interface';
 import { StatusCodes } from 'http-status-codes';
 import * as database from './user.database';
 
