@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -20,6 +20,14 @@ app.use(cors());
 app.use(helmet());
 
 app.use('/', userRouter);
+
+app.get('/', (req: Request, res: Response) => {
+  return res.status(200).json({
+    data: {
+      message: 'Welcome to the Micro-ECommerce API!'
+    }
+  })
+});
 
 app.listen(PORT, () => {
   console.log(`Listening on ${PORT}...`);
