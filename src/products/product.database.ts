@@ -2,10 +2,21 @@ import { IProduct, IProducts, IUnitProduct } from './product.interface';
 import { v4 as random } from 'uuid';
 import fs from 'fs';
 
+const FILENAME = './products.json';
+
+export function initializeProducts() {
+
+  // Check if the file exists
+  if (!fs.existsSync(FILENAME)) {
+    // Create the file
+    fs.writeFileSync(FILENAME, '', 'utf8');
+    console.log('Products.json created successfully!');
+  }
+}
 
 function loadProducts(): IProducts {
   try {
-    const data = fs.readFileSync('./products.json', 'utf8');
+    const data = fs.readFileSync(FILENAME, 'utf8');
     return JSON.parse(data);
   } catch (e) {
     console.log(`Error loading products. Error: ${e}`);
@@ -15,7 +26,7 @@ function loadProducts(): IProducts {
 
 function saveProducts() {
   try {
-    fs.writeFileSync('./products.json', JSON.stringify(products), 'utf8');
+    fs.writeFileSync(FILENAME, JSON.stringify(products), 'utf8');
     console.log(`Products saved successfully`);
   } catch (err) {
     console.log(`Error saving products. Error: ${err}`);

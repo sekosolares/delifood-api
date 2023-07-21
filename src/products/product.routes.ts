@@ -5,6 +5,8 @@ import { StatusCodes } from 'http-status-codes';
 
 export const productRouter = express.Router();
 
+database.initializeProducts();
+
 productRouter.get('/products', async (req: Request, res: Response) => {
   try {
     const allProducts = await database.findAll();
