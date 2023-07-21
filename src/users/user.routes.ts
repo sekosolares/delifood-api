@@ -183,7 +183,7 @@ userRouter.put('/user/:id', async (req: Request, res: Response) => {
   }
 });
 
-userRouter.delete('user/:id', async (req: Request, res: Response) => {
+userRouter.delete('/user/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const user = await database.findOne(id);

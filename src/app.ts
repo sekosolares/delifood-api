@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import { userRouter } from './users/user.routes';
+import { productRouter } from './products/product.routes';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(cors());
 app.use(helmet());
 
 app.use('/', userRouter);
+app.use('/', productRouter);
 
 app.get('/', (req: Request, res: Response) => {
   return res.status(200).json({
