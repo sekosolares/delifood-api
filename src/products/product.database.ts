@@ -1,5 +1,4 @@
 import { IProduct, IProducts, IUnitProduct } from './product.interface';
-import bcrypt from 'bcryptjs';
 import { v4 as random } from 'uuid';
 import fs from 'fs';
 
