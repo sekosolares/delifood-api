@@ -3,10 +3,21 @@ import bcrypt from 'bcryptjs';
 import { v4 as random } from 'uuid';
 import fs from 'fs';
 
+const FILENAME = './users.json';
+
+export function initializeUsers() {
+
+  // Check if the file exists
+  if (!fs.existsSync(FILENAME)) {
+    // Create the file
+    fs.writeFileSync(FILENAME, '', 'utf8');
+    console.log('users.json created successfully!');
+  }
+}
 
 function loadUsers(): IUsers {
   try {
-    const data = fs.readFileSync('./users.json', 'utf8');
+    const data = fs.readFileSync(FILENAME, 'utf8');
     return JSON.parse(data);
   } catch (e) {
     console.log(`Error loading users. Error: ${e}`);
@@ -16,7 +27,7 @@ function loadUsers(): IUsers {
 
 function saveUsers() {
   try {
-    fs.writeFileSync('./users.json', JSON.stringify(users), 'utf8');
+    fs.writeFileSync(FILENAME, JSON.stringify(users), 'utf8');
     console.log(`Users saved successfully`);
   } catch (err) {
     console.log(`Error saving users. Error: ${err}`);

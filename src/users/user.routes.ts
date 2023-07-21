@@ -5,6 +5,8 @@ import * as database from './user.database';
 
 export const userRouter = express.Router();
 
+database.initializeUsers();
+
 userRouter.get('/users', async (req: Request, res: Response) => {
   try {
     const allUsers: IUnitUser[] = await database.findAll();
