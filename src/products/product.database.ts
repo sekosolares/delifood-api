@@ -9,7 +9,7 @@ export function initializeProducts() {
   // Check if the file exists
   if (!fs.existsSync(FILENAME)) {
     // Create the file
-    fs.writeFileSync(FILENAME, '', 'utf8');
+    fs.writeFileSync(FILENAME, '{}', 'utf8');
     console.log('Products.json created successfully!');
   }
 }
@@ -36,22 +36,40 @@ function saveProducts() {
 let products: IProducts = loadProducts();
 
 
-export const findAll = async (): Promise<IUnitProduct[]> => Object.values(products);
+export const getAll = async (): Promise<IUnitProduct[]> => Object.values(products);
 
-export const findOne = async (id: string): Promise<IUnitProduct> => products[id];
+export const getById = async (id: string): Promise<IUnitProduct> => products[id];
+
+export const getByName = async (name: string): Promise<IUnitProduct | null> => {
+  const allProducts = await getAll();
+  const foundProduct = allProducts.find(product => product.name.toLowerCase() === name.toLowerCase());
+
+  if(!foundProduct) {
+    return null;
+  }
+
+  return foundProduct;
+}
 
 export const create = async (productInfo: IProduct): Promise<IUnitProduct|null> => {
   let id = random();
-  let checkProduct = await findOne(id);
+  let checkProduct = await getById(id);
 
   while(checkProduct) {
     id = random();
-    checkProduct = await findOne(id);
+    checkProduct = await getById(id);
   }
 
   products[id] = {
     id,
-    ...productInfo
+    name: productInfo.name,
+    description: productInfo.description,
+    price: productInfo.price,
+    quantity: productInfo.quantity,
+    image: productInfo.image,
+    categoryId: productInfo.categoryId,
+    createdAt: new Date(),
+    isActive: true
   };
 
   saveProducts();
@@ -60,14 +78,14 @@ export const create = async (productInfo: IProduct): Promise<IUnitProduct|null> 
 };
 
 export const update = async (id: string, updateValues: IProduct): Promise<IUnitProduct|null> => {
-  const product = await findOne(id);
+  const product = await getById(id);
 
   if(!product) {
     return null;
   }
 
   products[id] = {
-    id,
+    ...product,
     ...updateValues
   };
 
@@ -77,7 +95,7 @@ export const update = async (id: string, updateValues: IProduct): Promise<IUnitP
 };
 
 export const remove = async (id: string): Promise<IUnitProduct|null> => {
-  const productToRemove = await findOne(id);
+  const productToRemove = await getById(id);
 
   if(!productToRemove) {
     return null;

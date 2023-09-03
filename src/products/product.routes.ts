@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
-import { IProduct, IUnitProduct } from './product.interface';
+import { IUnitProduct } from './product.interface';
 import * as database from './product.database';
+import * as dbCategory from '../categories/category.database';
 import { StatusCodes } from 'http-status-codes';
 
 export const productRouter = express.Router();
@@ -9,7 +10,7 @@ database.initializeProducts();
 
 productRouter.get('/products', async (req: Request, res: Response) => {
   try {
-    const allProducts = await database.findAll();
+    const allProducts: IUnitProduct[] = await database.getAll();
 
     if(!allProducts) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -33,10 +34,10 @@ productRouter.get('/products', async (req: Request, res: Response) => {
   }
 });
 
-productRouter.get('/product/:id', async (req: Request, res: Response) => {
+productRouter.get('/products/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const product = await database.findOne(id);
+    const product = await database.getById(id);
 
     if(!product) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -57,14 +58,38 @@ productRouter.get('/product/:id', async (req: Request, res: Response) => {
   }
 });
 
-productRouter.post('/product', async (req: Request, res: Response) => {
+productRouter.post('/products', async (req: Request, res: Response) => {
   try {
-    const { name, price, quantity, image } = req.body;
+    const { name, description, price, quantity, image, categoryId } = req.body;
 
-    if(!name || !price || !quantity || !image) {
+    if(!name || !price || !quantity || !image || !categoryId || !description) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
-        data: { error: 'Please provide all required parameters (name, price, quantity, image)...' }
+        data: {
+          error: 'Please provide all required parameters...',
+          requiredFields: [
+            'name', 'price', 'quantity',
+            'image', 'categoryId', 'description'
+          ]
+        }
+      });
+    }
+
+    const existsCategory = await dbCategory.getById(categoryId);
+
+    if(!existsCategory) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        data: { error: 'Category with that Id was not found...' }
+      });
+    }
+
+    const existsProduct = await database.getByName(name);
+
+    if(existsProduct) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        data: { error: 'Product with that name already exists...' }
       });
     }
 
@@ -81,11 +106,11 @@ productRouter.post('/product', async (req: Request, res: Response) => {
   }
 });
 
-productRouter.put('/product/:id', async (req: Request, res: Response) => {
+productRouter.put('/products/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const newProduct = req.body;
-    const product = await database.findOne(id);
+    const product = await database.getById(id);
 
     if(!product) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -110,10 +135,10 @@ productRouter.put('/product/:id', async (req: Request, res: Response) => {
   }
 });
 
-productRouter.delete('/product/:id', async (req: Request, res: Response) => {
+productRouter.delete('/products/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const product = await database.findOne(id);
+    const product = await database.getById(id);
 
     if(!product) {
       return res.status(StatusCodes.NOT_FOUND).json({
