@@ -2,15 +2,15 @@ import { IUser, IUnitUser, IUsers } from './user.interface';
 import bcrypt from 'bcryptjs';
 import { v4 as random } from 'uuid';
 import fs from 'fs';
+import { USER_TYPES } from './constants';
 
 const FILENAME = './users.json';
 
 export function initializeUsers() {
-
   // Check if the file exists
   if (!fs.existsSync(FILENAME)) {
     // Create the file
-    fs.writeFileSync(FILENAME, '', 'utf8');
+    fs.writeFileSync(FILENAME, '{}', 'utf8');
     console.log('users.json created successfully!');
   }
 }
@@ -25,6 +25,8 @@ function loadUsers(): IUsers {
   }
 }
 
+let users: IUsers = loadUsers();
+
 function saveUsers() {
   try {
     fs.writeFileSync(FILENAME, JSON.stringify(users), 'utf8');
@@ -33,9 +35,6 @@ function saveUsers() {
     console.log(`Error saving users. Error: ${err}`);
   }
 }
-
-let users: IUsers = loadUsers();
-
 
 export const findAll = async (): Promise<IUnitUser[]> => Object.values(users);
 
@@ -57,7 +56,9 @@ export const create = async (userData: IUnitUser): Promise<IUnitUser|null> => {
     id: id,
     username: userData.username,
     email: userData.email,
-    password: hashedPassword
+    password: hashedPassword,
+    type: USER_TYPES.find(type => type.id === userData.type.id) ?? USER_TYPES[1],
+    loggedIn: false
   };
 
   users[id] = user;
@@ -68,7 +69,7 @@ export const create = async (userData: IUnitUser): Promise<IUnitUser|null> => {
 
 export const findByEmail = async (userEmail: string): Promise<IUnitUser|null> => {
   const allUsers = await findAll();
-  const getUser = allUsers.find(user => user.email === userEmail);
+  const getUser = allUsers.find(user => user.email.toLowerCase() === userEmail.toLowerCase());
 
   if(!getUser) {
     return null;
@@ -124,5 +125,3 @@ export const remove = async (id: string): Promise<IUnitUser|null> => {
 
   return userToRemove;
 };
-
-
