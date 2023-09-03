@@ -20,7 +20,8 @@ const allowedOrigins = [
   'http://localhost:7000',
   'https://localhost:3300',
   'http://127.0.0.1:5500',
-  'https://micro-ecommerce.onrender.com'
+  'https://micro-ecommerce.onrender.com',
+  'https://sekosolares.github.io'
 ];
 
 const corsOptions = {
