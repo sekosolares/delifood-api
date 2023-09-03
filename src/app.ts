@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { userRouter } from './users/user.routes';
 import { productRouter } from './products/product.routes';
+import { categoryRouter } from './categories/category.routes';
 
 dotenv.config();
 
@@ -15,13 +16,31 @@ const PORT = parseInt(process.env.PORT as string, 10);
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:7000',
+  'https://localhost:3300',
+  'http://127.0.0.1:5500',
+  'https://micro-ecommerce.onrender.com'
+];
+
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 
 app.use('/', userRouter);
 app.use('/', productRouter);
+app.use('/', categoryRouter);
 
 app.get('/', (req: Request, res: Response) => {
   return res.status(200).json({
@@ -31,6 +50,6 @@ app.get('/', (req: Request, res: Response) => {
   })
 });
 
-app.listen(PORT, () => {
+app.listen(PORT ?? 3300, () => {
   console.log(`Listening on ${PORT}...`);
 })

@@ -2,10 +2,35 @@ import express, { Request, Response } from 'express';
 import { IUnitUser } from './user.interface';
 import { StatusCodes } from 'http-status-codes';
 import * as database from './user.database';
+import { USER_TYPES } from './constants';
 
 export const userRouter = express.Router();
 
 database.initializeUsers();
+
+userRouter.get('/user-types', async (req: Request, res: Response) => {
+  return res.status(StatusCodes.OK).json({
+    success: true,
+    data: USER_TYPES
+  })
+});
+
+userRouter.get('/user-types/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const selectedType = USER_TYPES.find(type => type.id === id);
+
+  if(!selectedType) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      success: false,
+      data: { error: 'User type not found...' }
+    });
+  }
+
+  return res.status(StatusCodes.OK).json({
+    success: true,
+    data: selectedType
+  });
+});
 
 userRouter.get('/users', async (req: Request, res: Response) => {
   try {
