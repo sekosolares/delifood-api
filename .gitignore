@@ -3,3 +3,5 @@ node_modules/
 products.json
 users.json
 categories.json
+dist/
+build/
