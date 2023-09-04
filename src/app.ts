@@ -12,13 +12,12 @@ if(!process.env.PORT) {
   console.log('No port value specified...');
 }
 
-const PORT = parseInt(process.env.PORT as string, 10);
+const PORT = isNaN(parseInt(process.env.PORT as string, 10)) ? 8080 : parseInt(process.env.PORT as string, 10);
 
 const app = express();
 
 const allowedOrigins = [
-  'http://localhost:7000',
-  'https://localhost:3300',
+  'http://localhost:8080',
   'http://127.0.0.1:5500',
   'https://micro-ecommerce.onrender.com',
   'https://sekosolares.github.io'
@@ -51,6 +50,6 @@ app.get('/', (req: Request, res: Response) => {
   })
 });
 
-app.listen(PORT ?? 3300, () => {
+app.listen(PORT, () => {
   console.log(`Listening on ${PORT}...`);
 })
